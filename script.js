@@ -1,4 +1,4 @@
-// 導航選單切換（手機）
+// Navigation toggle (mobile)
 const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelector('.nav-links');
 if (navToggle && navLinks) {
@@ -14,11 +14,16 @@ if (navToggle && navLinks) {
   });
 }
 
-// 年分自動更新
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!prefersReducedMotion) {
+  document.documentElement.classList.add('motion-ready');
+}
+
+// Dynamic year
 const year = document.getElementById('year');
 if (year) year.textContent = String(new Date().getFullYear());
 
-// 倒數計時（依據 data-datetime）
+// Countdown (data-datetime attribute)
 function startCountdown(root) {
   const iso = root.getAttribute('data-datetime');
   const target = iso ? new Date(iso) : null;
@@ -46,10 +51,9 @@ function startCountdown(root) {
   tick();
   return setInterval(tick, 1000);
 }
-
 document.querySelectorAll('[data-countdown]').forEach((el) => startCountdown(el));
 
-// 平滑捲動
+// Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach((a) => {
   a.addEventListener('click', (e) => {
     const id = a.getAttribute('href');
@@ -62,9 +66,67 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   });
 });
 
-// 櫻花花瓣 + 風吹效果
+// Hero entrance animation
+(function heroIntro() {
+  if (prefersReducedMotion || !(window.gsap && typeof gsap.timeline === 'function')) return;
+  const hero = document.querySelector('.cover-inner');
+  if (!hero) return;
+
+  const tl = gsap.timeline({ defaults: { duration: 0.9, ease: 'power3.out', opacity: 0 } });
+  const eyebrow = hero.querySelector('.eyebrow');
+  const names = hero.querySelector('.names');
+  const date = hero.querySelector('.date');
+  const countdownItems = hero.querySelectorAll('.countdown .cd-item');
+  const ctas = hero.querySelectorAll('.actions .btn');
+
+  if (eyebrow) tl.from(eyebrow, { y: 18 });
+  if (names) tl.from(names, { y: 16 }, '-=0.5');
+  if (date) tl.from(date, { y: 14 }, '-=0.45');
+  if (countdownItems.length) tl.from(countdownItems, { y: 14, stagger: 0.08 }, '-=0.4');
+  if (ctas.length) tl.from(ctas, { y: 12, stagger: 0.06 }, '-=0.38');
+})();
+
+// Section/card reveal on scroll (details excluded)
+(function revealOnScroll() {
+  if (prefersReducedMotion) return;
+
+  const items = [];
+  document.querySelectorAll('.section').forEach((section) => {
+    if (section.id === 'details') return;
+    section.dataset.reveal = '';
+    items.push(section);
+    section.querySelectorAll('.container, h2, h3, .card, .actions, .gallery, .map-embed').forEach((child, idx) => {
+      child.dataset.reveal = '';
+      child.style.setProperty('--reveal-delay', `${idx * 0.08}s`);
+      items.push(child);
+    });
+  });
+
+  const footer = document.querySelector('.site-footer');
+  if (footer) {
+    footer.dataset.reveal = '';
+    items.push(footer);
+  }
+
+  if (!items.length) return;
+
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+  items.forEach((el) => io.observe(el));
+})();
+
+// Petals + wind animation
 (function petals() {
-  const layer = document.getElementById('petals') || (function() {
+  if (prefersReducedMotion) return;
+
+  const layer = document.getElementById('petals') || (function createLayer() {
     const el = document.createElement('div');
     el.id = 'petals';
     el.setAttribute('aria-hidden', 'true');
@@ -75,7 +137,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   if (!(window.gsap && typeof gsap.to === 'function')) return;
 
   const rnd = gsap.utils.random;
-  const PETAL_COUNT = 22; // 可調整數量
+  const PETAL_COUNT = 22;
 
   for (let i = 0; i < PETAL_COUNT; i++) {
     const p = document.createElement('div');
@@ -92,7 +154,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     layer.appendChild(p);
 
     const dur = rnd(6, 11);
-    // 直向落下 + 隨機偏移
+    // Fall + drift
     gsap.to(p, {
       y: '120vh',
       x: `+=${rnd(-80, 80)}`,
@@ -102,7 +164,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
       delay: rnd(0, 6),
       repeat: -1
     });
-    // 左右搖曳（微風）
+    // Breeze sway
     gsap.to(p, {
       x: `+=${rnd(-60, 60)}`,
       duration: rnd(4, 7),
@@ -112,7 +174,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     });
   }
 
-  // 陣風：讓整個花瓣圖層左右帶一點位移，形成風吹感
+  // Gentle gusts for the whole layer
   (function windGusts(el) {
     function gust() {
       const dir = Math.random() > 0.5 ? 1 : -1;
@@ -132,7 +194,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   })(layer);
 })();
 
-// 我們的故事：相片廊（左右滑動 / 點選圓點 / 左右鍵）
+// Story carousel (swipe/click/keys)
 (function storyGallery() {
   const root = document.getElementById('story-gallery');
   if (!root) return;
@@ -149,20 +211,20 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   const btnNext = root.querySelector('.gallery-nav.next');
   const dots = root.querySelector('.gallery-dots');
 
-  // 建立 slides 與 dots
+  // Build slides + dots
   list.forEach((name, idx) => {
     const item = document.createElement('figure');
     item.className = 'slide';
     item.setAttribute('role', 'listitem');
-    const img = document.createElement('jpg');
-    img.src = `image/${name}`; // 將照片放在 image/ 資料夾
-    img.alt = `我們的照片 ${idx + 1}`;
+    const img = document.createElement('img');
+    img.src = `image/${name}`; // Images expected in image/ directory
+    img.alt = `story ${idx + 1}`;
     item.appendChild(img);
     track.appendChild(item);
 
     const dot = document.createElement('button');
     dot.type = 'button';
-    dot.setAttribute('aria-label', `第 ${idx + 1} 張`);
+    dot.setAttribute('aria-label', `Slide ${idx + 1}`);
     dot.addEventListener('click', () => goTo(idx));
     dots.appendChild(dot);
   });
@@ -182,7 +244,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   if (btnPrev) btnPrev.addEventListener('click', prev);
   if (btnNext) btnNext.addEventListener('click', next);
 
-  // 鍵盤左右鍵（當相簿在視窗中）
+  // Keyboard arrows when gallery is in view
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       if (e.isIntersecting) {
@@ -199,7 +261,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     if (ev.key === 'ArrowLeft') prev();
   }
 
-  // 觸控滑動（簡易）
+  // Touch/drag swipe
   let startX = 0;
   let currentX = 0;
   let dragging = false;
@@ -218,7 +280,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   function onTouchEnd() {
     if (!dragging) return;
     dragging = false;
-    const threshold = viewport.clientWidth * 0.15; // 滑過 15% 視為切換
+    const threshold = viewport.clientWidth * 0.15; // 15% swipe threshold
     if (currentX < -threshold) next();
     else if (currentX > threshold) prev();
     else update();
@@ -228,7 +290,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   viewport.addEventListener('touchstart', onTouchStart, { passive: true });
   viewport.addEventListener('touchmove', onTouchMove, { passive: true });
   viewport.addEventListener('touchend', onTouchEnd);
-  // 滑鼠拖曳（可選）
+  // Mouse drag (optional)
   viewport.addEventListener('mousedown', onTouchStart);
   window.addEventListener('mousemove', onTouchMove);
   window.addEventListener('mouseup', onTouchEnd);
