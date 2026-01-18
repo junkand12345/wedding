@@ -195,14 +195,32 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 })();
 
 // Story carousel (swipe/click/keys)
-(function storyGallery() {
+(async function storyGallery() {
   const root = document.getElementById('story-gallery');
   if (!root) return;
 
-  const list = (root.dataset.images || '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+  function parseList(input) {
+    return (input || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  let list = parseList(root.dataset.images);
+
+  // Prefer manifest.json so new photos show up automatically; fall back to data-images
+  try {
+    const res = await fetch('image/manifest.json', { cache: 'no-cache' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) {
+        list = data.map((s) => String(s)).filter(Boolean);
+      }
+    }
+  } catch (err) {
+    console.warn('Unable to load gallery manifest:', err);
+  }
+
   if (!list.length) return;
 
   const viewport = root.querySelector('.gallery-viewport');
