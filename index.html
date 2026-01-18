@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>電子喜帖 | 我們要結婚了</title>
     <meta name="description" content="電子喜帖：婚禮資訊、RSVP、交通指引與聯絡方式" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -26,7 +29,6 @@
 
     <main id="home" class="hero cover fixed-size" style="--cover:url('background/dobe-1434.jpg'); --section-width: 100vw; --section-height: 720px;">
       <div class="container cover-inner">
-        
         <p class="eyebrow">Wedding Invitation</p>
         <h1 class="names">李彥霖 <span>&</span> 陳郁淇</h1>
         <p class="date">2026 年 3 月 28 日（六） 下午 17:00</p>
@@ -37,23 +39,23 @@
           <div class="cd-item"><span class="ss">--</span><small>秒</small></div>
         </div>
         <div class="actions">
-          <a class="btn primary" href="#rsvp">立即回復 RSVP</a>
-          <a class="btn scroll-arrow" href="#details"> <span class="arrow" aria-hidden="true"></span></a>
+          <a class="btn primary" href="#rsvp">回覆出席 RSVP</a>
+          <a class="btn" href="#details">查看資訊</a>
         </div>
       </div>
     </main>
 
-    <section id="details" class="section fixed-size" style="--section-width: 100vw; --section-height: 720px;">
+    <section id="details" class="section">
       <div class="container">
         <h2>婚禮資訊</h2>
         <div class="grid">
           <article class="card">
             <h3>日期與時間</h3>
-            <p>2026/03/28（六）<br />17:00 入席｜18:00 典禮開始</p>
+            <p class="highlight-time">2026/03/28（六）<br />17:00 入席｜18:00 典禮開始</p>
           </article>
           <article class="card">
             <h3>宴客地點</h3>
-            <p>260宜蘭縣宜蘭市旋流路12號(停車位：超大的專屬免費停車場)</p>
+            <p class="highlight-address">260宜蘭縣宜蘭市旋流路12號</p>
             <p><a class="btn" target="_blank" rel="noopener" href="https://maps.app.goo.gl/pvcb1vERxamzpcn8A">查看地圖</a></p>
           </article>
           
@@ -64,7 +66,7 @@
       </div>
     </section>
 
-    <section id="story" class="section alt fixed-size" style="--section-width: 100vw; --section-height: 720px;">
+    <section id="story" class="section alt">
       <div class="container">
         <h2>我們的故事</h2>
         <div class="grid">
@@ -91,27 +93,21 @@
       </div>
     </section>
 
-    <section id="rsvp" class="section fixed-size" style="--section-width: 100vw; --section-height: 720px;">
+    <section id="contact" class="hero cover fixed-size" style="--cover:url('background/dobe-1085.jpg'); --cover-position: center 40%; --section-width: 100vw; --section-height: 720px;">
       <div class="container">
+        <div id="rsvp"></div>
         <h2>回覆出席</h2>
-        <p class="muted">請於 2026/03/01 前回覆，感謝！</p>
+        <p class="muted">請於 2026/02/13 前回覆，感謝！</p>
         <div class="actions">
-          <a class="btn primary" href="rsvp.html?to=https%3A%2F%2Fforms.gle%2Fyour-google-form-id" target="_blank" rel="noopener">前往 Google 表單回覆</a>
+          <a class="btn primary" href="https://forms.gle/vwRWzX1d1BAufh9s5" target="_blank" rel="noopener">前往 Google 表單回覆</a>
         </div>
-        <p class="muted small">表單送出後將顯示感謝訊息；若啟用 Google 表單「回覆收據」或外掛通知，將自動寄送至來賓信箱。</p>
-      </div>
-    </section>
 
-    <section id="contact" class="section fixed-size" style="--section-width: 100vw; --section-height: 720px;">
-      <div class="container">
         <h2>聯絡資訊</h2>
         <div class="grid contacts">
           <article class="card contact-card">
             <h3>新郎 李彥霖</h3>
             
-            <p>
-              <a href="tel:0961008892">電話:0961008892</a> ·
-            </p>
+            
              <p>
               <a href="https://line.me/ti/p/~lineid-bride" target="_blank" rel="noopener">Line</a>
             </p>
@@ -119,9 +115,7 @@
           <article class="card contact-card">
             <h3>新娘 陳郁淇</h3>
             
-            <p>
-              <a href="tel:0988387925">電話:0988387925</a> 
-            </p>
+            
             <p>
               <a href="https://line.me/ti/p/~lineid-bride" target="_blank" rel="noopener">Line</a>
             </p>
@@ -130,16 +124,12 @@
             <h3>男方家長</h3>
             <p>李春慶</p>
             
-            <p>
-              <a href="tel:0983377100">電話:0983377100</a> 
-            </p>
+            
           </article>
           <article class="card contact-card">
             <h3>女方家長</h3>
             <p>陳富烈</p>
-            <p>
-              <a href="tel:0900123456">電話:09XXXXXXX</a>     
-            </p>
+            
           </article>
         </div>
       </div>
