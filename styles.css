@@ -12,9 +12,9 @@
   --shadow: 0 12px 30px rgba(160,120,120,0.18);
   --radius: 16px;
   --container: 1100px;
-  --gallery-aspect: 16 / 9;
+  --gallery-aspect: 2 / 3;
   --gallery-max-height: 70vh;
-  --gallery-object-fit: cover;
+  --gallery-object-fit: contain;
 }
 
 * { box-sizing: border-box; }
@@ -36,6 +36,7 @@ a { color: inherit; text-decoration: none; }
 .container { width: min(100% - 24px, var(--container)); margin: 0 auto; }
 .muted { color: var(--muted); }
 .small { font-size: 0.92rem; }
+.rsvp-deadline { font-size: 1.5rem; color: var(--danger); font-weight: 700; }
 
 /* header */
 .site-header {
@@ -98,8 +99,53 @@ a { color: inherit; text-decoration: none; }
 .section.alt { background: linear-gradient(180deg, rgba(255,255,255,0.6), transparent); }
 .section h2 { margin: 0 0 12px; font-size: 28px; }
 .section p { color: var(--text); }
-.highlight-time { font-size: 1.1rem; font-weight: 700; line-height: 1.6; }
-.highlight-address { font-size: 1.05rem; font-weight: 700; line-height: 1.6; }
+#front.front-section,
+.front-section {
+  padding: 0;
+}
+.front-strip {
+  width: 100vw;
+  margin: 0 calc(50% - 50vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.front-photo { margin: 0; }
+.front-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+  border: 0;
+}
+#story .container { text-align: center; }
+#story .gallery { margin-left: auto; margin-right: auto; }
+#details .container { text-align: center; }
+#details .details-photo {
+  width: 100vw;
+  margin: 0 calc(50% - 50vw) 20px;
+  display: block;
+}
+#details .details-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+  border: 0;
+}
+#details .card { text-align: center; }
+#contact .container { text-align: center; }
+#contact .card { text-align: center; }
+.detail-title { font-size: 1.5rem; }
+#details h2,
+#contact h2,
+#story h2 {
+  font-size: 32px;
+}
+.section p.highlight-time { font-size: 1.3rem; font-weight: 700; line-height: 1.6; color: #2c6fd6; }
+.highlight-address { font-size: 1.3rem; font-weight: 700; line-height: 1.6; }
 
 .motion-ready [data-reveal] {
   opacity: 0;
@@ -107,6 +153,9 @@ a { color: inherit; text-decoration: none; }
   transition: transform .9s ease, opacity .9s ease;
   transition-delay: var(--reveal-delay, 0s);
   will-change: transform, opacity;
+}
+.motion-ready .front-photo[data-reveal] {
+  transform: none;
 }
 .motion-ready [data-reveal].in-view {
   opacity: 1;
@@ -215,9 +264,14 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
   border-radius: 12px;
   border: 1px solid rgba(0,0,0,0.06);
-  background: #fff;
+  background: #000;
   box-shadow: var(--shadow);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
   /* 給定可見高度，避免圖片尚未載入時高度為 0 */
   aspect-ratio: var(--gallery-aspect, 16 / 9);
   max-height: var(--gallery-max-height, 70vh);
@@ -235,12 +289,18 @@ a { color: inherit; text-decoration: none; }
   height: 100%;
   user-select: none;
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .slide img {
-  width: 100%;
+  width: auto;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   display: block;
   object-fit: var(--gallery-object-fit, cover);
+  object-position: center;
 }
 .gallery-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 999px; border: 0; color: #fff; background: rgba(0,0,0,0.25); display: grid; place-items: center; backdrop-filter: blur(4px); cursor: pointer; }
 .gallery-nav.prev { left: 8px; }

@@ -95,7 +95,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
     if (section.id === 'details') return;
     section.dataset.reveal = '';
     items.push(section);
-    section.querySelectorAll('.container, h2, h3, .card, .actions, .gallery, .map-embed').forEach((child, idx) => {
+    section.querySelectorAll('.container, h2, h3, .card, .actions, .gallery, .map-embed, .front-strip, .front-photo').forEach((child, idx) => {
       child.dataset.reveal = '';
       child.style.setProperty('--reveal-delay', `${idx * 0.08}s`);
       items.push(child);
