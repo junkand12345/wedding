@@ -66,6 +66,51 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   });
 });
 
+// Background music (loop)
+(function bgMusic() {
+  const audio = document.getElementById('bg-music');
+  const toggle = document.querySelector('.music-toggle');
+  if (!audio || !toggle) return;
+
+  audio.loop = true;
+  audio.volume = 0.6;
+
+  function setUi(isPlaying) {
+    toggle.classList.toggle('is-playing', isPlaying);
+    toggle.setAttribute('aria-pressed', String(isPlaying));
+    toggle.textContent = isPlaying ? '暫停音樂' : '播放音樂';
+  }
+
+  function tryPlay() {
+    const res = audio.play();
+    if (res && typeof res.then === 'function') {
+      res.then(() => setUi(true)).catch(() => setUi(false));
+    } else {
+      setUi(!audio.paused);
+    }
+  }
+
+  // Try autoplay; if blocked, user can start via first interaction or button.
+  tryPlay();
+
+  let activated = false;
+  function activateOnce() {
+    if (activated) return;
+    activated = true;
+    tryPlay();
+  }
+  window.addEventListener('pointerdown', activateOnce, { once: true, passive: true });
+
+  toggle.addEventListener('click', () => {
+    if (audio.paused) {
+      tryPlay();
+    } else {
+      audio.pause();
+      setUi(false);
+    }
+  });
+})();
+
 // Hero entrance animation
 (function heroIntro() {
   if (prefersReducedMotion || !(window.gsap && typeof gsap.timeline === 'function')) return;
@@ -92,10 +137,10 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 
   const items = [];
   document.querySelectorAll('.section').forEach((section) => {
-    if (section.id === 'details') return;
+    if (section.id === 'details' || section.id === 'front') return;
     section.dataset.reveal = '';
     items.push(section);
-    section.querySelectorAll('.container, h2, h3, .card, .actions, .gallery, .map-embed, .front-strip, .front-photo').forEach((child, idx) => {
+    section.querySelectorAll('.container, h2, h3, .card, .actions, .gallery, .map-embed').forEach((child, idx) => {
       child.dataset.reveal = '';
       child.style.setProperty('--reveal-delay', `${idx * 0.08}s`);
       items.push(child);
@@ -143,6 +188,24 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   requestAnimationFrame(() => {
     items.forEach((el) => io.observe(el));
   });
+
+  const frontPhotos = document.querySelectorAll('.front-photo');
+  if (frontPhotos.length) {
+    const frontObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          revealWhenReady(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40% 0px' });
+
+    frontPhotos.forEach((photo) => {
+      photo.dataset.reveal = '';
+      photo.style.setProperty('--reveal-delay', '0s');
+      frontObserver.observe(photo);
+    });
+  }
 })();
 
 // Petals + wind animation

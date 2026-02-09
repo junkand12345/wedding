@@ -205,6 +205,28 @@ a { color: inherit; text-decoration: none; }
   50% { transform: translateY(-2px) scale(1.02); box-shadow: 0 16px 34px rgba(160,120,120,0.3); }
 }
 
+/* music toggle */
+.music-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.92);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.music-toggle.is-playing {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border: 0;
+}
+
 /* subtle CTA focus on mobile */
 @media (max-width: 760px) {
   .btn.primary {
