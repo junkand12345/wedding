@@ -110,16 +110,39 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 
   if (!items.length) return;
 
+  function queueReveal(el) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.classList.add('in-view');
+      });
+    });
+  }
+
+  function revealWhenReady(el) {
+    if (el.classList.contains('front-photo')) {
+      const img = el.querySelector('img');
+      if (img && !img.complete) {
+        const onDone = () => queueReveal(el);
+        img.addEventListener('load', onDone, { once: true });
+        img.addEventListener('error', onDone, { once: true });
+        return;
+      }
+    }
+    queueReveal(el);
+  }
+
   const io = new IntersectionObserver((entries, obs) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
+        revealWhenReady(entry.target);
         obs.unobserve(entry.target);
       }
     });
   }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
 
-  items.forEach((el) => io.observe(el));
+  requestAnimationFrame(() => {
+    items.forEach((el) => io.observe(el));
+  });
 })();
 
 // Petals + wind animation
